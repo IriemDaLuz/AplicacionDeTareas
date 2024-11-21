@@ -1,22 +1,14 @@
-package com.example.composeroomapp.viewmodel
+class TaskViewModel(private val taskDao: TaskDao, private val taskTypeDao: TaskTypeDao) : ViewModel() {
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.example.composeroomapp.data.Task
-import com.example.composeroomapp.data.TaskDao
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
-
-class TaskViewModel(private val taskDao: TaskDao) : ViewModel() {
-
-    // Estado que contiene la lista de tareas
     private val _tasks = MutableStateFlow<List<Task>>(emptyList())
     val tasks: StateFlow<List<Task>> = _tasks
 
-    // Cargar todas las tareas desde la base de datos
+    private val _taskTypes = MutableStateFlow<List<TaskType>>(emptyList())
+    val taskTypes: StateFlow<List<TaskType>> = _taskTypes
+
     init {
         loadTasks()
+        loadTaskTypes()
     }
 
     private fun loadTasks() {
@@ -25,30 +17,29 @@ class TaskViewModel(private val taskDao: TaskDao) : ViewModel() {
         }
     }
 
-    // Agregar una nueva tarea
-    fun addTask(name: String) {
+    private fun loadTaskTypes() {
+        viewModelScope.launch {
+            _taskTypes.value = taskTypeDao.getAllTaskTypes()
+        }
+    }
+
+    fun addTask(name: String, typeId: Int) {
         if (name.isBlank()) return
 
         viewModelScope.launch {
-            val newTask = Task(name = name)
+            val newTask = Task(name = name, id_tipostareas = typeId)
             taskDao.insert(newTask)
-            loadTasks() // Recargar las tareas después de agregar
+            loadTasks()
         }
     }
 
-    // Actualizar una tarea existente
-    fun updateTask(task: Task) {
-        viewModelScope.launch {
-            taskDao.update(task)
-            loadTasks() // Recargar las tareas después de actualizar
-        }
-    }
+    fun addTaskType(title: String) {
+        if (title.isBlank()) return
 
-    // Eliminar una tarea
-    fun deleteTask(task: Task) {
         viewModelScope.launch {
-            taskDao.delete(task)
-            loadTasks() // Recargar las tareas después de eliminar
+            val newTaskType = TaskType(title = title)
+            taskTypeDao.insert(newTaskType)
+            loadTaskTypes()
         }
     }
 }
