@@ -1,4 +1,5 @@
-package com.example.composeroomapp.data
+
+package com.example.aplicacion12.data
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
@@ -15,9 +16,11 @@ import androidx.room.PrimaryKey
         )
     ]
 )
+
 data class Task(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val name: String,
     val isCompleted: Boolean = false,
-    val id_tipostareas: Int // Relación con TiposTareas
+    val description: String? = null, // Hacer que sea opcional
+    val id_tipostareas: Int
 )
