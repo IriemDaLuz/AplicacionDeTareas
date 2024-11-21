@@ -6,6 +6,6 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "task_types")
 data class TaskType(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    @PrimaryKey(autoGenerate = true) val id: Int =0,
     val title: String
 )

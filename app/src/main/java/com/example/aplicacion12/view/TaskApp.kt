@@ -7,13 +7,16 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 @Composable
 fun TaskApp(viewModel: TaskViewModel) {
     val tasks by viewModel.tasks.collectAsState()
     var newTaskName by remember { mutableStateOf("") }
-    var selectedTaskType by remember { mutableStateOf(0) }
+    var selectedTaskTypeName by remember { mutableStateOf("") }
+    var newTaskDescrip by remember { mutableStateOf("") } // Definir esta variable
 
     Column(
         modifier = Modifier
@@ -22,47 +25,78 @@ fun TaskApp(viewModel: TaskViewModel) {
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        OutlinedTextField(
-            value = newTaskName,
-            onValueChange = { newTaskName = it },
-            label = { Text("New Task") },
-            placeholder = { Text("Enter task name...") },
-            modifier = Modifier.fillMaxWidth()
+        Text(
+            text = "Añadir nuevo tipo de Tareas",
+            fontWeight = FontWeight.Bold,
+            fontSize = 28.sp,
+            modifier = Modifier.padding(top = 38.dp, bottom = 46.dp)
         )
 
-        OutlinedTextField(
-            value = selectedTaskType.toString(),
-            onValueChange = { selectedTaskType = it.toIntOrNull() ?: 0 },
-            label = { Text("Task Type ID") },
-            placeholder = { Text("Enter task type ID...") },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Button(
-            onClick = {
-                if (newTaskName.isNotBlank()) {
-                    viewModel.addTask(newTaskName, selectedTaskType)
-                    newTaskName = ""
-                    selectedTaskType = 0
-                }
-            },
-            modifier = Modifier
-                .padding(top = 12.dp)
-                .fillMaxWidth()
-        ) {
-            Text("Añadir Tareas")
+        Text("Crear nuevo tipo de Tarea")
+        Row {
+            OutlinedTextField(
+                value = selectedTaskTypeName,
+                onValueChange = { selectedTaskTypeName = it },
+                label = { Text("Tipo de Tarea") },
+                placeholder = { Text("Crear tipo de tarea...") },
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
+            Button(onClick = { viewModel.addTaskType(selectedTaskTypeName) }) { // Corrección aquí
+                Text("+")
+            }
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Usar Column en lugar de LazyColumn
+        Text("Crear nueva tarea")
+        Row(modifier = Modifier.fillMaxWidth()) {
+            OutlinedTextField(
+                value = newTaskName,
+                onValueChange = { newTaskName = it },
+                label = { Text("Titulo de Tarea") },
+                placeholder = { Text("Pon el nombre de la tarea...") },
+                modifier = Modifier.weight(1f) // Hacer que ocupe todo el espacio disponible
+            )
+        }
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Row(modifier = Modifier.fillMaxWidth()) {
+            OutlinedTextField(
+                value = newTaskDescrip,
+                onValueChange = { newTaskDescrip = it },
+                label = { Text("Descripcion") },
+                placeholder = { Text("Pon la descripcion de la tarea...") },
+                modifier = Modifier.weight(1f) // Usar el mismo principio para la descripción
+            )
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Button(
+            onClick = {
+                if (newTaskName.isNotBlank() && selectedTaskTypeName.isNotBlank()) {
+                    viewModel.addTask(newTaskName, selectedTaskTypeName, newTaskDescrip)
+                    newTaskName = ""
+                    selectedTaskTypeName = ""
+                    newTaskDescrip = ""
+                }
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Añadir")
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(top = 8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            for (task in tasks) {
+            tasks.forEach { task ->
                 TaskCard(task)
             }
         }
