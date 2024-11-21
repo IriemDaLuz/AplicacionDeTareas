@@ -3,14 +3,15 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     id("com.google.devtools.ksp")
+
 }
 
 android {
-    namespace = "com.example.composeroomapp"
+    namespace = "com.example.aplicacion12"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.example.composeroomapp"
+        applicationId = "com.example.aplicacion12"
         minSdk = 28
         targetSdk = 35
         versionCode = 1
