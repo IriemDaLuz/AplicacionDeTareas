@@ -44,12 +44,12 @@ dependencies {
 
     implementation(libs.androidx.activity.compose.v172)
     implementation(libs.ui)
-    implementation(libs.androidx.material)
+    implementation(libs.androidx.material3)
     implementation(libs.ui.tooling.preview)
 
     // (Room)
     implementation(libs.androidx.room.runtime)
-    ksp(    libs.androidx.room.compiler)
+    ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
 
     // (Lifecycle)
