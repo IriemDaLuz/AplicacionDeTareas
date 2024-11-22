@@ -17,7 +17,7 @@ fun TaskApp(viewModel: TaskViewModel) {
     val tasks by viewModel.tasks.collectAsState()
     var newTaskName by remember { mutableStateOf("") }
     var selectedTaskTypeName by remember { mutableStateOf("") }
-    var newTaskDescrip by remember { mutableStateOf("") } // Definir esta variable
+    var newTaskDescrip by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
@@ -43,7 +43,7 @@ fun TaskApp(viewModel: TaskViewModel) {
                 modifier = Modifier
                     .fillMaxWidth()
             )
-            Button(onClick = { viewModel.addTaskType(selectedTaskTypeName) }) { // Corrección aquí
+            Button(onClick = { viewModel.addTaskType(selectedTaskTypeName) }) {
                 Text("+")
             }
         }
@@ -57,7 +57,7 @@ fun TaskApp(viewModel: TaskViewModel) {
                 onValueChange = { newTaskName = it },
                 label = { Text("Titulo de Tarea") },
                 placeholder = { Text("Pon el nombre de la tarea...") },
-                modifier = Modifier.weight(1f) // Hacer que ocupe todo el espacio disponible
+                modifier = Modifier.weight(1f)
             )
         }
 

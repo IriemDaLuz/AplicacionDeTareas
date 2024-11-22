@@ -10,7 +10,7 @@ import androidx.room.PrimaryKey
         ForeignKey(
             entity = TaskType::class,
             parentColumns = ["title"],
-            childColumns = ["id_tipostareas"],
+            childColumns = ["title"],
             onDelete = ForeignKey.CASCADE
         )
     ]
