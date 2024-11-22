@@ -49,9 +49,8 @@ class TaskViewModel(private val taskDao: TaskDao, private val taskTypeDao: TaskT
                 val taskType = taskTypeDao.getTaskTypeByTitle(typeTitle)
                 if (taskType != null) {
                     // Crear una nueva tarea y guardarla
-                    val newTask = Task(name = name, id_tipostareas = taskType.id, description = description)
+                    val newTask = Task(name = name, title = taskType.title, description = description)
                     taskDao.insert(newTask)
-                    // loadTasks() es innecesario aquí si el Flow se actualiza automáticamente
                 } else {
                     Log.e("TaskViewModel", "Tipo de tarea no encontrado: $typeTitle")
                 }
@@ -70,7 +69,6 @@ class TaskViewModel(private val taskDao: TaskDao, private val taskTypeDao: TaskT
                 // Crear un nuevo tipo de tarea y guardarlo
                 val newTaskType = TaskType(title = title)
                 taskTypeDao.insert(newTaskType)
-                // loadTaskTypes() es innecesario aquí si el Flow se actualiza automáticamente
             } catch (e: Exception) {
                 Log.e("TaskViewModel", "Error al añadir tipo de tarea: ${e.message}")
             }

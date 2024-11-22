@@ -9,7 +9,7 @@ import androidx.room.PrimaryKey
     foreignKeys = [
         ForeignKey(
             entity = TaskType::class,
-            parentColumns = ["id"],
+            parentColumns = ["title"],
             childColumns = ["id_tipostareas"],
             onDelete = ForeignKey.CASCADE
         )
@@ -21,5 +21,6 @@ data class Task(
     val id: Int =0,
     val name: String,
     val description: String? = null,
-    val id_tipostareas: Int
+    //titulo de tabla tipo tarea
+    val title: String
 )
