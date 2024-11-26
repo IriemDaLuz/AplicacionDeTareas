@@ -48,14 +48,17 @@ fun TaskCard(task: Task) {
                     Text(text = task.name, fontWeight = FontWeight.Bold)
                     Text(task.id_tipostareas.toString())
                 }
+                if (expanded) {
+                    Text(descvisibilidad)
+                }
                 Button(onClick = {expanded = !expanded},
                     modifier = Modifier.padding(start = 8.dp)
                 ){
                     if (expanded){
                         descvisibilidad= task.description.toString()
                     }
+                    Spacer(modifier = Modifier.height(16.dp))
                     Text(if (expanded) "Cerrar Descripcion" else "Mostrar descripcion")
-                    Text(descvisibilidad)
                 }
             }
         }
