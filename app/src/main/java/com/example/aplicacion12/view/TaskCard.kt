@@ -18,9 +18,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.aplicacion12.data.Task
 
-
 @Composable
-fun TaskCard(task: Task) {
+fun TaskCard(
+    task: Task
+) {
     var expanded by remember { mutableStateOf(false) }
     var descvisibilidad by remember { mutableStateOf("") }
 
@@ -38,7 +39,8 @@ fun TaskCard(task: Task) {
         )
 
         Row(
-            modifier=Modifier.padding(vertical = animatedPadding, horizontal = 8.dp),) {
+            modifier = Modifier.padding(vertical = animatedPadding, horizontal = 8.dp),
+        ) {
             Text(task.id.toString())
             Column(
                 modifier = Modifier.padding(16.dp),
@@ -51,18 +53,25 @@ fun TaskCard(task: Task) {
                 if (expanded) {
                     Text(descvisibilidad)
                 }
-                Button(onClick = {expanded = !expanded},
+                Button(onClick = { expanded = !expanded },
                     modifier = Modifier.padding(start = 8.dp)
-                ){
-                    if (expanded){
-                        descvisibilidad= task.description.toString()
+                ) {
+                    if (expanded) {
+                        descvisibilidad = task.description.toString()
                     }
                     Spacer(modifier = Modifier.height(16.dp))
                     Text(if (expanded) "Cerrar Descripcion" else "Mostrar descripcion")
                 }
+
+            }
+            Column {
+                Button({}) {
+                    Text("Actualizar")
+                }
+                Button({}) {
+                    Text("Borrar")
+                }
             }
         }
     }
-
 }
-

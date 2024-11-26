@@ -37,8 +37,8 @@ fun TaskApp(viewModel: TaskViewModel) {
         Text(
             text = "Añadir nuevo tipo de Tareas",
             fontWeight = FontWeight.Bold,
-            fontSize = 28.sp,
-            modifier = Modifier.padding(top = 38.dp, bottom = 46.dp)
+            fontSize = 18.sp,
+            modifier = Modifier.padding(top = 18.dp, bottom = 46.dp)
         )
 
         Text("Crear nuevo tipo de Tarea")
@@ -49,9 +49,19 @@ fun TaskApp(viewModel: TaskViewModel) {
                 label = { Text("Tipo de Tarea") },
                 placeholder = { Text("Crear o seleccionar tipo de tarea...") }
             )
-            Button(onClick = { viewModel.addTaskType(selectedTaskTypeName) }, modifier = Modifier.fillMaxWidth())
-            {
-                Text("Añadir")
+            Column() {
+                Button(
+                    onClick = { viewModel.addTaskType(selectedTaskTypeName) },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                {
+                    Text("Añadir")
+                }
+                Button({}
+                )
+                {
+                    Text("Mostrar")
+                }
             }
         }
 
