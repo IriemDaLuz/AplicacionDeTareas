@@ -42,7 +42,7 @@ fun TaskApp(viewModel: TaskViewModel) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Añadir nuevo tipo de Tareas",
+            text = "Gestor de Tareas",
             fontWeight = FontWeight.Bold,
             fontSize = 18.sp,
             modifier = Modifier.padding(top = 18.dp, bottom = 46.dp)

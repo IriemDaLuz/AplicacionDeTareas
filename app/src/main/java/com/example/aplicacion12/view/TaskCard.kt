@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.aplicacion12.data.Task
 
 @Composable
@@ -51,48 +52,49 @@ fun TaskCard(
             Column(
                 horizontalAlignment = Alignment.Start
             ) {
-                Text("Id Tarea:" + task.id.toString())
                 Row(modifier = Modifier, horizontalArrangement = Arrangement.SpaceBetween) {
-                    Text(text = task.name, fontWeight = FontWeight.Bold)
+                    Text(text = task.id.toString() + ". " +task.name, fontWeight = FontWeight.Bold, fontSize = 18.sp)
                     Text(modifier = Modifier.padding(start = 20.dp),text="Id de tipo de Tarea:"+task.id_tipostareas.toString())
                 }
                 if (expanded) {
                     Text(descVisibility)
                 }
-                Button(onClick = {
-                    expanded = !expanded
-                    if (expanded) {
-                        descVisibility = task.description.toString()
+                Row {
+                    Button(
+                        onClick = {
+                            expanded = !expanded
+                            if (expanded) {
+                                descVisibility = task.description.toString()
+                            }
+                        },
+                        modifier = Modifier.padding(start = 8.dp, bottom = 0.dp)
+                    ) {
+                        Text(if (expanded) "Cerrar Descripción" else "Mostrar descripción")
                     }
-                },
-                    modifier = Modifier.padding(start = 8.dp)
-                ) {
-                    Text(if (expanded) "Cerrar Descripción" else "Mostrar descripción")
+                    Column (modifier = Modifier.padding(end = 0.dp)){
+                        Button(
+                            onClick = { onUpdate(task) },
+                            modifier = Modifier.padding(bottom = 8.dp)
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.Edit,
+                                contentDescription = "Editar",
+                                tint = Color.White
+                            )
+                        }
+                        // Delete button
+                        Button(onClick = { onDelete(task) }) {
+                            Icon(
+                                imageVector = Icons.Filled.Delete,
+                                contentDescription = "Eliminar",
+                                tint = Color.White
+                            )
+                        }
+                    }
                 }
             }
             Spacer(modifier = Modifier.width(16.dp))
 
-            Column(horizontalAlignment = Alignment.End) {
-                // Edit button
-                Button(
-                    onClick = { onUpdate(task) },
-                    modifier = Modifier.padding(bottom = 8.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Edit,
-                        contentDescription = "Editar",
-                        tint = Color.White
-                    )
-                }
-                // Delete button
-                Button(onClick = { onDelete(task) }) {
-                    Icon(
-                        imageVector = Icons.Filled.Delete,
-                        contentDescription = "Eliminar",
-                        tint = Color.White
-                    )
-                }
-            }
         }
     }
 }
