@@ -5,13 +5,6 @@ import androidx.room.*
 @Dao
 interface TaskTypeDao {
 
-    // Insertar un nuevo tipo de tarea
-    @Insert
-    suspend fun insert(taskType: TaskType)
-
-    // Obtener un tipo de tarea por título
-    @Query("SELECT * FROM task_types WHERE title = :title LIMIT 1")
-    suspend fun getTaskTypeByTitle(title: String): TaskType?
 
     // Actualizar un tipo de tarea existente
     @Update
@@ -21,7 +14,12 @@ interface TaskTypeDao {
     @Delete
     suspend fun delete(taskType: TaskType)
 
-    // Obtener todos los tipos de tarea
     @Query("SELECT * FROM task_types")
     suspend fun getAllTaskTypes(): List<TaskType>
+
+    @Query("SELECT * FROM task_types WHERE title = :title LIMIT 1")
+    suspend fun getTaskTypeByTitle(title: String): TaskType?
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(taskType: TaskType)
 }

@@ -5,12 +5,10 @@ import androidx.room.*
 @Dao
 interface TaskDao {
 
-    // Obtener todas las tareas
     @Query("SELECT * FROM tasks")
     suspend fun getAllTasks(): List<Task>
 
-    // Insertar una nueva tarea
-    @Insert(onConflict = OnConflictStrategy.REPLACE) // Evitar duplicados
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(task: Task)
 
     // Actualizar una tarea existente
@@ -24,4 +22,5 @@ interface TaskDao {
     // Obtener una tarea específica por ID (si es necesario en el futuro)
     @Query("SELECT * FROM tasks WHERE id = :taskId LIMIT 1")
     suspend fun getTaskById(taskId: Int): Task?
+
 }

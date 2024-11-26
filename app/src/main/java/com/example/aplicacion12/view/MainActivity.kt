@@ -4,8 +4,9 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.lifecycle.ViewModelProvider
-import com.example.aplicacion12.viewmodel.TaskViewModelFactory
+import com.example.aplicacion12.viewmodel.*
 import com.example.aplicacion12.data.AppDatabase
+import com.example.aplicacion12.viewmodel.Task.TaskViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

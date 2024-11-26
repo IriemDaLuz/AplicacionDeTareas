@@ -18,6 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.aplicacion12.data.Task
 
+
 @Composable
 fun TaskCard(task: Task) {
     var expanded by remember { mutableStateOf(false) }
@@ -45,7 +46,7 @@ fun TaskCard(task: Task) {
             ) {
                 Row(modifier = Modifier, horizontalArrangement = Arrangement.SpaceBetween) {
                     Text(text = task.name, fontWeight = FontWeight.Bold)
-                    Text(text = task.title)
+                    Text(task.id_tipostareas.toString())
                 }
                 Button(onClick = {expanded = !expanded},
                     modifier = Modifier.padding(start = 8.dp)

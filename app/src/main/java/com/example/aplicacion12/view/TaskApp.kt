@@ -1,6 +1,5 @@
 package com.example.aplicacion12.view
 
-import TaskViewModel
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
@@ -11,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.aplicacion12.viewmodel.Task.TaskViewModel
 
 @Composable
 fun TaskApp(viewModel: TaskViewModel) {

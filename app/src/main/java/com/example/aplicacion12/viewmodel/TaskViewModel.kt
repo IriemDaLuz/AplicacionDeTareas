@@ -1,3 +1,5 @@
+package com.example.aplicacion12.viewmodel.Task
+
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -49,13 +51,17 @@ class TaskViewModel(private val taskDao: TaskDao, private val taskTypeDao: TaskT
                 val taskType = taskTypeDao.getTaskTypeByTitle(typeTitle)
                 if (taskType != null) {
                     // Crear una nueva tarea y guardarla
-                    val newTask = Task(name = name, title = taskType.title, description = description)
+                    val newTask = Task(
+                        id = 0,
+                        name = name,
+                        id_tipostareas = taskType.id.toLong(), // Convert Int to Long
+                        description = description
+                    )
                     taskDao.insert(newTask)
                 } else {
                     Log.e("TaskViewModel", "Tipo de tarea no encontrado: $typeTitle")
                 }
-            } catch (e: Exception) {
-                Log.e("TaskViewModel", "Error al añadir tarea: ${e.message}")
+            } catch (e: Exception) {                Log.e("TaskViewModel", "Error al añadir tarea: ${e.message}")
             }
         }
     }
@@ -67,7 +73,7 @@ class TaskViewModel(private val taskDao: TaskDao, private val taskTypeDao: TaskT
         viewModelScope.launch {
             try {
                 // Crear un nuevo tipo de tarea y guardarlo
-                val newTaskType = TaskType(title = title)
+                val newTaskType = TaskType(id = 0, title = title) // 'id = 0' se autogenerará si está configurado en la entidad.
                 taskTypeDao.insert(newTaskType)
             } catch (e: Exception) {
                 Log.e("TaskViewModel", "Error al añadir tipo de tarea: ${e.message}")

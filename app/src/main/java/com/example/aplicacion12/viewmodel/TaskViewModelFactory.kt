@@ -1,10 +1,10 @@
 package com.example.aplicacion12.viewmodel
 
-import TaskViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.example.aplicacion12.data.TaskDao
 import com.example.aplicacion12.data.TaskTypeDao
+import com.example.aplicacion12.viewmodel.Task.TaskViewModel
 
 class TaskViewModelFactory(
     private val taskDao: TaskDao,
