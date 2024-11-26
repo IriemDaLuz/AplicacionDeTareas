@@ -1,24 +1,32 @@
 package com.example.aplicacion12.view
 
+import android.util.Log
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.aplicacion12.viewmodel.Task.TaskViewModel
-
 @Composable
 fun TaskApp(viewModel: TaskViewModel) {
     val tasks by viewModel.tasks.collectAsState()
     var newTaskName by remember { mutableStateOf("") }
     var selectedTaskTypeName by remember { mutableStateOf("") }
     var newTaskDescrip by remember { mutableStateOf("") }
+    val taskTypes by viewModel.taskTypes.collectAsState()
 
+    LaunchedEffect(tasks) {
+        Log.d("TaskApp", "Tasks updated: $tasks")
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -39,12 +47,11 @@ fun TaskApp(viewModel: TaskViewModel) {
                 value = selectedTaskTypeName,
                 onValueChange = { selectedTaskTypeName = it },
                 label = { Text("Tipo de Tarea") },
-                placeholder = { Text("Crear tipo de tarea...") },
-                modifier = Modifier
-                    .fillMaxWidth()
+                placeholder = { Text("Crear o seleccionar tipo de tarea...") }
             )
-            Button(onClick = { viewModel.addTaskType(selectedTaskTypeName) }) {
-                Text("+")
+            Button(onClick = { viewModel.addTaskType(selectedTaskTypeName) }, modifier = Modifier.fillMaxWidth())
+            {
+                Text("Añadir")
             }
         }
 
@@ -69,7 +76,7 @@ fun TaskApp(viewModel: TaskViewModel) {
                 onValueChange = { newTaskDescrip = it },
                 label = { Text("Descripcion") },
                 placeholder = { Text("Pon la descripcion de la tarea...") },
-                modifier = Modifier.weight(1f) // Usar el mismo principio para la descripción
+                modifier = Modifier.weight(1f)
             )
         }
 
@@ -91,13 +98,13 @@ fun TaskApp(viewModel: TaskViewModel) {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Column(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(top = 8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            tasks.forEach { task ->
+            items(tasks) { task ->
                 TaskCard(task)
             }
         }
