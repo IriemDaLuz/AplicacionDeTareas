@@ -61,6 +61,7 @@ class TaskViewModel(private val taskDao: TaskDao, private val taskTypeDao: TaskT
                 } else {
                     Log.e("TaskViewModel", "Tipo de tarea no encontrado: $typeTitle")
                 }
+                loadTasks() // Recargar tareas después de actualizar
             } catch (e: Exception) {
                 Log.e("TaskViewModel", "Error al añadir tarea: ${e.message}")
             }
@@ -76,6 +77,7 @@ class TaskViewModel(private val taskDao: TaskDao, private val taskTypeDao: TaskT
                 // Crear un nuevo tipo de tarea y guardarlo
                 val newTaskType = TaskType(id = 0, title = title) // 'id = 0' se autogenerará si está configurado en la entidad.
                 taskTypeDao.insert(newTaskType)
+                loadTasks() // Recargar tareas después de actualizar
             } catch (e: Exception) {
                 Log.e("TaskViewModel", "Error al añadir tipo de tarea: ${e.message}")
             }

@@ -16,6 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.aplicacion12.viewmodel.Task.TaskViewModel
+
 @Composable
 fun TaskApp(viewModel: TaskViewModel) {
     val tasks by viewModel.tasks.collectAsState()
@@ -23,10 +24,12 @@ fun TaskApp(viewModel: TaskViewModel) {
     var selectedTaskTypeName by remember { mutableStateOf("") }
     var newTaskDescrip by remember { mutableStateOf("") }
     val taskTypes by viewModel.taskTypes.collectAsState()
+    var showTaskTypes by remember { mutableStateOf(false) }
 
     LaunchedEffect(tasks) {
         Log.d("TaskApp", "Tasks updated: $tasks")
     }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -47,20 +50,21 @@ fun TaskApp(viewModel: TaskViewModel) {
                 value = selectedTaskTypeName,
                 onValueChange = { selectedTaskTypeName = it },
                 label = { Text("Tipo de Tarea") },
-                placeholder = { Text("Crear o seleccionar tipo de tarea...") }
+                placeholder = { Text("Crear o seleccionar tipo de tarea...") },
+                modifier = Modifier.weight(3f)
             )
-            Column() {
+            Column (modifier = Modifier.weight(2f)){
                 Button(
                     onClick = { viewModel.addTaskType(selectedTaskTypeName) },
                     modifier = Modifier.fillMaxWidth()
-                )
-                {
+                ) {
                     Text("Añadir")
                 }
-                Button({}
-                )
-                {
-                    Text("Mostrar")
+                Button(
+                    onClick = { showTaskTypes = !showTaskTypes },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(if (showTaskTypes) "Cerrar" else "Mostrar")
                 }
             }
         }
@@ -104,6 +108,23 @@ fun TaskApp(viewModel: TaskViewModel) {
             modifier = Modifier.fillMaxWidth()
         ) {
             Text("Añadir")
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Mostrar tipos de tareas si el estado showTaskTypes es verdadero
+        if (showTaskTypes) {
+            Text("Tipos de Tareas Existentes:", fontWeight = FontWeight.Bold)
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items(taskTypes) { taskType ->
+                    Text(taskType.title) // Muestra el título de cada tipo de tarea
+                }
+            }
         }
 
         Spacer(modifier = Modifier.height(16.dp))
