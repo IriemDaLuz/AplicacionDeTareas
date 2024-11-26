@@ -28,7 +28,7 @@ fun TaskApp(viewModel: TaskViewModel) {
     var showTaskTypes by remember { mutableStateOf(false) }
 
     // Variable para saber si estamos editando una tarea
-    var taskBeingEdited by remember { mutableStateOf<Task?>(null) }
+    var modoEdicion by remember { mutableStateOf<Task?>(null) }
 
     LaunchedEffect(tasks) {
         Log.d("TaskApp", "Tasks updated: $tasks")
@@ -58,7 +58,7 @@ fun TaskApp(viewModel: TaskViewModel) {
                 placeholder = { Text("Crear o seleccionar tipo de tarea...") },
                 modifier = Modifier.weight(3f)
             )
-            Column(modifier = Modifier.weight(2f)) {
+            Column(modifier = Modifier.weight(1.5f).padding(start = 20.dp)) {
                 Button(
                     onClick = { viewModel.addTaskType(selectedTaskTypeName) },
                     modifier = Modifier.fillMaxWidth()
@@ -77,7 +77,7 @@ fun TaskApp(viewModel: TaskViewModel) {
         Spacer(modifier = Modifier.height(16.dp))
 
         // Crear nueva tarea o editar tarea existente
-        Text(if (taskBeingEdited == null) "Crear nueva tarea" else "Editar tarea")
+        Text(if (modoEdicion == null) "Crear nueva tarea" else "Editar tarea")
         Row(modifier = Modifier.fillMaxWidth()) {
             OutlinedTextField(
                 value = newTaskName,
@@ -105,12 +105,12 @@ fun TaskApp(viewModel: TaskViewModel) {
         Button(
             onClick = {
                 if (newTaskName.isNotBlank() && selectedTaskTypeName.isNotBlank()) {
-                    if (taskBeingEdited == null) {
+                    if (modoEdicion == null) {
                         // Si no estamos editando, crear nueva tarea
                         viewModel.addTask(newTaskName, selectedTaskTypeName, newTaskDescrip)
                     } else {
                         // Si estamos editando, actualizar la tarea
-                        val updatedTask = taskBeingEdited!!.copy(
+                        val updatedTask = modoEdicion!!.copy(
                             name = newTaskName,
                             description = newTaskDescrip,
                             id_tipostareas = taskTypes.find { it.title == selectedTaskTypeName }?.id?.toLong() ?: 0
@@ -121,12 +121,12 @@ fun TaskApp(viewModel: TaskViewModel) {
                     newTaskName = ""
                     selectedTaskTypeName = ""
                     newTaskDescrip = ""
-                    taskBeingEdited = null // Reseteamos la tarea en edición
+                    modoEdicion = null // Reseteamos la tarea en edición
                 }
             },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(if (taskBeingEdited == null) "Añadir" else "Confirmar edición")
+            Text(if (modoEdicion == null) "Añadir" else "Confirmar edición")
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -161,7 +161,7 @@ fun TaskApp(viewModel: TaskViewModel) {
                     onDelete = { viewModel.deleteTask(task) },
                     onUpdate = { updatedTask ->
                         // Configurar campos para la edición
-                        taskBeingEdited = updatedTask
+                        modoEdicion = updatedTask
                         newTaskName = updatedTask.name
                         selectedTaskTypeName = taskTypes.find { it.id.toLong() == updatedTask.id_tipostareas }?.title ?: ""
                         newTaskDescrip = updatedTask.description

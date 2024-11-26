@@ -6,24 +6,29 @@ import androidx.compose.animation.core.spring
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.*
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.aplicacion12.data.Task
 
 @Composable
 fun TaskCard(
-    task: Task
+    task: Task,
+    onDelete: (Task) -> Unit,
+    onUpdate: (Task) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
-    var descvisibilidad by remember { mutableStateOf("") }
+    var descVisibility by remember { mutableStateOf("") }
 
     Card(
         modifier = Modifier
@@ -51,25 +56,40 @@ fun TaskCard(
                     Text(task.id_tipostareas.toString())
                 }
                 if (expanded) {
-                    Text(descvisibilidad)
+                    Text(descVisibility)
                 }
-                Button(onClick = { expanded = !expanded },
+                Button(onClick = {
+                    expanded = !expanded
+                    if (expanded) {
+                        descVisibility = task.description.toString()
+                    }
+                },
                     modifier = Modifier.padding(start = 8.dp)
                 ) {
-                    if (expanded) {
-                        descvisibilidad = task.description.toString()
-                    }
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Text(if (expanded) "Cerrar Descripcion" else "Mostrar descripcion")
+                    Text(if (expanded) "Cerrar Descripción" else "Mostrar descripción")
                 }
-
             }
-            Column {
-                Button({}) {
-                    Text("Actualizar")
+            Spacer(modifier = Modifier.width(16.dp))
+
+            Column(horizontalAlignment = Alignment.End) {
+                // Edit button
+                Button(
+                    onClick = { onUpdate(task) },
+                    modifier = Modifier.padding(bottom = 8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Edit,
+                        contentDescription = "Editar",
+                        tint = Color.White
+                    )
                 }
-                Button({}) {
-                    Text("Borrar")
+                // Delete button
+                Button(onClick = { onDelete(task) }) {
+                    Icon(
+                        imageVector = Icons.Filled.Delete,
+                        contentDescription = "Eliminar",
+                        tint = Color.White
+                    )
                 }
             }
         }
