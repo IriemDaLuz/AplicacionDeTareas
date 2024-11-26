@@ -81,4 +81,16 @@ class TaskViewModel(private val taskDao: TaskDao, private val taskTypeDao: TaskT
             }
         }
     }
+
+    // Eliminar una tarea
+    fun deleteTask(task: Task) {
+        viewModelScope.launch {
+            try {
+                taskDao.delete(task)
+                loadTasks() // Recargar tareas después de eliminar
+            } catch (e: Exception) {
+                Log.e("TaskViewModel", "Error al eliminar tarea: ${e.message}")
+            }
+        }
+    }
 }
