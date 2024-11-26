@@ -61,7 +61,8 @@ class TaskViewModel(private val taskDao: TaskDao, private val taskTypeDao: TaskT
                 } else {
                     Log.e("TaskViewModel", "Tipo de tarea no encontrado: $typeTitle")
                 }
-            } catch (e: Exception) {                Log.e("TaskViewModel", "Error al añadir tarea: ${e.message}")
+            } catch (e: Exception) {
+                Log.e("TaskViewModel", "Error al añadir tarea: ${e.message}")
             }
         }
     }
