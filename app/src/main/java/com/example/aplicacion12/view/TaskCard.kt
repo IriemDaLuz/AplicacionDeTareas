@@ -46,14 +46,15 @@ fun TaskCard(
         Row(
             modifier = Modifier.padding(vertical = animatedPadding, horizontal = 8.dp),
         ) {
-            Text(task.id.toString())
+
+
             Column(
-                modifier = Modifier.padding(16.dp),
                 horizontalAlignment = Alignment.Start
             ) {
+                Text("Id Tarea:" + task.id.toString())
                 Row(modifier = Modifier, horizontalArrangement = Arrangement.SpaceBetween) {
                     Text(text = task.name, fontWeight = FontWeight.Bold)
-                    Text(task.id_tipostareas.toString())
+                    Text(modifier = Modifier.padding(start = 20.dp),text="Id de tipo de Tarea:"+task.id_tipostareas.toString())
                 }
                 if (expanded) {
                     Text(descVisibility)
