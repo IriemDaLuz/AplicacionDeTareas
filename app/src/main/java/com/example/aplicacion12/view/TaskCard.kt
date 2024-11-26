@@ -3,7 +3,9 @@ package com.example.aplicacion12.view
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
+Editamosimport androidx.compose.animation.expandHorizontally
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
@@ -17,6 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.InspectableModifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -37,7 +40,7 @@ fun TaskCard(
             .padding(8.dp)
     ) {
         val animatedPadding by animateDpAsState(
-            targetValue = if (expanded) 48.dp else 18.dp,
+            targetValue = if (expanded) 24.dp else 15.dp,
             animationSpec = spring(
                 dampingRatio = Spring.DampingRatioMediumBouncy,
                 stiffness = Spring.StiffnessLow
@@ -50,16 +53,16 @@ fun TaskCard(
 
 
             Column(
-                horizontalAlignment = Alignment.Start
+
             ) {
-                Row(modifier = Modifier, horizontalArrangement = Arrangement.SpaceBetween) {
+                Row(modifier = Modifier) {
                     Text(text = task.id.toString() + ". " +task.name, fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                    Text(modifier = Modifier.padding(start = 20.dp),text="Id de tipo de Tarea:"+task.id_tipostareas.toString())
+                    Text(modifier = Modifier.padding(start = 60.dp),text="Id de tipo de Tarea:"+task.id_tipostareas.toString())
                 }
                 if (expanded) {
-                    Text(descVisibility)
+                    Text(modifier = Modifier.padding(start=30.dp,15.dp, bottom = 15.dp),text=descVisibility)
                 }
-                Row {
+                Row() {
                     Button(
                         onClick = {
                             expanded = !expanded
@@ -71,25 +74,21 @@ fun TaskCard(
                     ) {
                         Text(if (expanded) "Cerrar Descripción" else "Mostrar descripción")
                     }
-                    Column (modifier = Modifier.padding(end = 0.dp)){
-                        Button(
-                            onClick = { onUpdate(task) },
-                            modifier = Modifier.padding(bottom = 8.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Filled.Edit,
-                                contentDescription = "Editar",
-                                tint = Color.White
-                            )
-                        }
-                        // Delete button
-                        Button(onClick = { onDelete(task) }) {
-                            Icon(
-                                imageVector = Icons.Filled.Delete,
-                                contentDescription = "Eliminar",
-                                tint = Color.White
-                            )
-                        }
+                    Button(modifier = Modifier.padding(start = 8.dp, bottom = 0.dp ),onClick = {}) {
+                        Icon(
+                            imageVector = Icons.Filled.Edit,
+                            contentDescription = "Editar",
+                            tint = Color.White
+                        )
+                    }
+
+                    // Delete button
+                    Button(onClick = { onDelete(task) }) {
+                        Icon(
+                            imageVector = Icons.Filled.Delete,
+                            contentDescription = "Eliminar",
+                            tint = Color.White
+                        )
                     }
                 }
             }
