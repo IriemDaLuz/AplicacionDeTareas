@@ -3,6 +3,7 @@ package com.example.aplicacion12.view
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -11,6 +12,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.*
 import androidx.compose.runtime.remember
@@ -38,7 +40,7 @@ fun TaskCard(
         val animatedPadding by animateDpAsState(
             targetValue = if (expanded) 24.dp else 15.dp,
             animationSpec = spring(
-                dampingRatio = Spring.DampingRatioMediumBouncy,
+                dampingRatio = Spring.DampingRatioLowBouncy,
                 stiffness = Spring.StiffnessLow
             )
         )
@@ -46,10 +48,7 @@ fun TaskCard(
         Row(
             modifier = Modifier.padding(vertical = animatedPadding, horizontal = 8.dp),
         ) {
-
-
             Column(
-
             ) {
                 Row(modifier = Modifier) {
                     Text(text = task.id.toString() + ". " +task.name, fontWeight = FontWeight.Bold, fontSize = 18.sp)
@@ -66,11 +65,11 @@ fun TaskCard(
                                 descVisibility = task.description.toString()
                             }
                         },
-                        modifier = Modifier.padding(start = 8.dp, bottom = 0.dp)
+                        modifier = Modifier.padding(start = 8.dp, bottom = 0.dp), colors = ButtonDefaults.buttonColors(Color(0xFFFFCC35))
                     ) {
                         Text(if (expanded) "Cerrar Descripción" else "Mostrar descripción")
                     }
-                    Button(modifier = Modifier.padding(start = 8.dp, bottom = 0.dp ),onClick = {}) {
+                    Button(modifier = Modifier.padding(start = 8.dp, bottom = 0.dp ),onClick = {}, colors = ButtonDefaults.buttonColors(Color(0xFFFFCC35))) {
                         Icon(
                             imageVector = Icons.Filled.Edit,
                             contentDescription = "Editar",
@@ -79,7 +78,7 @@ fun TaskCard(
                     }
 
                     // Delete button
-                    Button(onClick = { onDelete(task) }) {
+                    Button(onClick = { onDelete(task) }, colors = ButtonDefaults.buttonColors(Color(0xFFFFCC35))) {
                         Icon(
                             imageVector = Icons.Filled.Delete,
                             contentDescription = "Eliminar",

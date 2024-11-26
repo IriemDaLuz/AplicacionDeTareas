@@ -1,11 +1,24 @@
 package com.example.aplicacion12.view
 
+import android.R
 import android.util.Log
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Build
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -13,6 +26,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ModifierLocalBeyondBoundsLayout
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -41,7 +55,8 @@ fun TaskApp(viewModel: TaskViewModel) {
             .fillMaxSize()
             .padding(16.dp),
         verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+
     ) {
         Text(
             text = "Gestor de Tareas",
@@ -63,13 +78,13 @@ fun TaskApp(viewModel: TaskViewModel) {
             Column(modifier = Modifier.weight(1.5f).padding(start = 20.dp)) {
                 Button(
                     onClick = { viewModel.addTaskType(selectedTaskTypeName) },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.buttonColors(Color(0xFFFFCC35))
                 ) {
                     Text("Añadir")
                 }
                 Button(
                     onClick = { showTaskTypes = !showTaskTypes },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.buttonColors(Color(0xFFFFCC35))
                 ) {
                     Text(if (showTaskTypes) "Cerrar" else "Mostrar")
                 }
@@ -126,15 +141,23 @@ fun TaskApp(viewModel: TaskViewModel) {
                     modoEdicion = null // Reseteamos la tarea en edición
                 }
             },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.buttonColors(Color(0xFFFFCC35))
         ) {
-            Text(if (modoEdicion == null) "Añadir" else "Confirmar edición")
+            Text(if (modoEdicion == null) "Agregar Tarea" else "Confirmar edición")
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
         // Mostrar tipos de tareas existentes
         if (showTaskTypes) {
+
+            val animatedPadding by animateDpAsState(
+                targetValue = if (showTaskTypes) 24.dp else 15.dp,
+                animationSpec = spring(
+                    dampingRatio = Spring.DampingRatioLowBouncy,
+                    stiffness = Spring.StiffnessLow
+                )
+            )
             Text("Tipos de Tareas Existentes:", fontWeight = FontWeight.Bold)
             LazyColumn(
                 modifier = Modifier
@@ -143,16 +166,15 @@ fun TaskApp(viewModel: TaskViewModel) {
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(taskTypes) { taskType ->
-                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+                    Row(modifier = Modifier.fillMaxWidth().background(color=Color(0xFFFFCC35)), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
                         Text(taskType.title)
                         // Muestra el título de cada tipo de tarea
-                        Row (modifier = Modifier.padding(end = 10.dp)){
-                            Button(onClick = {viewModel.updateTaskType(taskType)}) {
-
-                                Text("Editar")
+                        Row (modifier = Modifier.padding( end = 10.dp)){
+                            IconButton(onClick = {viewModel.updateTaskType(taskType)}){
+                                Icon(Icons.Filled.Build, contentDescription = "Editar")
                             }
-                            Button(onClick = {viewModel.deleteTaskType(taskType)}) {
-                                Text(text = "Eliminar")
+                            IconButton(onClick = {viewModel.deleteTaskType(taskType)}){
+                                Icon(Icons.Filled.Delete, contentDescription = "Eliminar")
                             }
                         }
                     }
