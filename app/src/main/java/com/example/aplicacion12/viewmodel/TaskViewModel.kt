@@ -93,4 +93,15 @@ class TaskViewModel(private val taskDao: TaskDao, private val taskTypeDao: TaskT
             }
         }
     }
+    //Actualizar una tarea
+    fun updateTask(task: Task) {
+        viewModelScope.launch {
+            try {
+                taskDao.update(task)
+                loadTasks() // Recargar tareas después de actualizar
+            } catch (e: Exception) {
+                Log.e("TaskViewModel", "Error al actualizar tarea: ${e.message}")
+            }
+        }
+    }
 }
