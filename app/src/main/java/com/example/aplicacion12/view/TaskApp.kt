@@ -41,6 +41,8 @@ fun TaskApp(viewModel: TaskViewModel) {
     // Variables de edición
     var modoEdicion by remember { mutableStateOf<Task?>(null) }
     var modoEdicionTipo by remember { mutableStateOf(false) }
+    var showAddTaskScreen by remember { mutableStateOf(false) }
+    var showAddTaskTypeScreen by remember { mutableStateOf(false) }
     var taskTypeToEdit by remember { mutableStateOf<TaskType?>(null) }
 
     Column(
@@ -57,116 +59,121 @@ fun TaskApp(viewModel: TaskViewModel) {
             modifier = Modifier.padding(top = 18.dp, bottom = 24.dp)
         )
         Row {
-            Button(onClick = {showAddTaskScreen}) {
+            Button(onClick = {showAddTaskScreen=true}) {
                 Text("Añadir Tareas")
             }
 
-            Button(onClick = {showAddTaskTypeScreen}) {
+            Button(onClick = {showAddTaskTypeScreen=true}) {
                 Text("Añadir Tipos de Tareas")
             }
         }
-        // Crear o editar tipo de tarea
-        Text(if (modoEdicionTipo) "Editar tipo de tarea" else "Crear nuevo tipo de tarea")
-        Row {
-            OutlinedTextField(
-                value = selectedTaskTypeName,
-                onValueChange = { selectedTaskTypeName = it },
-                label = { Text("Tipo de Tarea") },
-                placeholder = { Text("Crear o seleccionar tipo de tarea...") },
-                modifier = Modifier.weight(3f)
-            )
-            Column(modifier = Modifier.weight(1.5f).padding(start = 20.dp)) {
-                Button(
-                    onClick = {
-                        if (selectedTaskTypeName.isNotBlank()) {
-                            val repetido = taskTypes.any { it.title.equals(selectedTaskTypeName, ignoreCase = true) }
-                            if (repetido) {
-                                Log.d("TaskApp", "El tipo de tarea ya existe: $selectedTaskTypeName")
-                            } else {
-                                if (modoEdicionTipo && taskTypeToEdit != null) {
-                                    // Actualizar tipo de tarea
-                                    val updatedTaskType = taskTypeToEdit!!.copy(title = selectedTaskTypeName)
-                                    viewModel.updateTaskType(updatedTaskType)
-                                    modoEdicionTipo = false
-                                    taskTypeToEdit = null
-                                } else {
-                                    // Crear nuevo tipo de tarea
-                                    viewModel.addTaskType(selectedTaskTypeName)
-                                }
-                                selectedTaskTypeName = ""
-                            }
-                        }
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(Color(0xFFFFCC35))
-                ) {
-                    Text(if (modoEdicionTipo) "Actualizar" else "Añadir")
-                }
+        if (showAddTaskScreen) {
+            // Crear nueva tarea o editar tarea existente
+            Text(if (modoEdicion == null) "Crear nueva tarea" else "Editar tarea")
+            Row(modifier = Modifier.fillMaxWidth()) {
+                OutlinedTextField(
+                    value = newTaskName,
+                    onValueChange = { newTaskName = it },
+                    label = { Text("Título de Tarea") },
+                    placeholder = { Text("Pon el nombre de la tarea...") },
+                    modifier = Modifier.weight(1f)
+                )
+            }
 
-                Button(
-                    onClick = { showTaskTypes = !showTaskTypes },
-                    modifier = Modifier.fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(Color(0xFFFFCC35))
-                ) {
-                    Text(if (showTaskTypes) "Cerrar" else "Mostrar")
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Row(modifier = Modifier.fillMaxWidth()) {
+                OutlinedTextField(
+                    value = newTaskDescrip,
+                    onValueChange = { newTaskDescrip = it },
+                    label = { Text("Descripción") },
+                    placeholder = { Text("Pon la descripción de la tarea...") },
+                    modifier = Modifier.weight(1f)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Button(
+                onClick = {
+                    if (newTaskName.isNotBlank() && selectedTaskTypeName.isNotBlank()) {
+                        if (modoEdicion == null) {
+                            // Crear nueva tarea
+                            viewModel.addTask(newTaskName, selectedTaskTypeName, newTaskDescrip)
+                        } else {
+                            // Actualizar tarea existente
+                            val updatedTask = modoEdicion!!.copy(
+                                name = newTaskName,
+                                description = newTaskDescrip,
+                                id_tipostareas = taskTypes.find { it.title == selectedTaskTypeName }?.id?.toLong() ?: 0
+                            )
+                            viewModel.updateTask(updatedTask)
+                        }
+                        // Limpiar campos después de agregar o editar
+                        newTaskName = ""
+                        selectedTaskTypeName = ""
+                        newTaskDescrip = ""
+                        modoEdicion = null
+                    }
+                },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(Color(0xFFFFCC35))
+            ) {
+                Text(if (modoEdicion == null) "Agregar Tarea" else "Confirmar Edición")
+            }
+            Button(onClick ={ showAddTaskScreen=false}) { Text("Cerrar") }
+            Spacer(modifier = Modifier.height(16.dp))
+
+        }
+        if (showAddTaskTypeScreen){
+            // Crear o editar tipo de tarea
+            Text(if (modoEdicionTipo) "Editar tipo de tarea" else "Crear nuevo tipo de tarea")
+            Row {
+                OutlinedTextField(
+                    value = selectedTaskTypeName,
+                    onValueChange = { selectedTaskTypeName = it },
+                    label = { Text("Tipo de Tarea") },
+                    placeholder = { Text("Crear o seleccionar tipo de tarea...") },
+                    modifier = Modifier.weight(3f)
+                )
+                Column(modifier = Modifier.weight(1.5f).padding(start = 20.dp)) {
+                    Button(
+                        onClick = {
+                            if (selectedTaskTypeName.isNotBlank()) {
+                                val repetido = taskTypes.any { it.title.equals(selectedTaskTypeName, ignoreCase = true) }
+                                if (repetido) {
+                                    Log.d("TaskApp", "El tipo de tarea ya existe: $selectedTaskTypeName")
+                                } else {
+                                    if (modoEdicionTipo && taskTypeToEdit != null) {
+                                        // Actualizar tipo de tarea
+                                        val updatedTaskType = taskTypeToEdit!!.copy(title = selectedTaskTypeName)
+                                        viewModel.updateTaskType(updatedTaskType)
+                                        modoEdicionTipo = false
+                                        taskTypeToEdit = null
+                                    } else {
+                                        // Crear nuevo tipo de tarea
+                                        viewModel.addTaskType(selectedTaskTypeName)
+                                    }
+                                    selectedTaskTypeName = ""
+                                }
+                            }
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(Color(0xFFFFCC35))
+                    ) {
+                        Text(if (modoEdicionTipo) "Actualizar" else "Añadir")
+                    }
+
+                    Button(
+                        onClick = { showTaskTypes = !showTaskTypes },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(Color(0xFFFFCC35))
+                    ) {
+                        Text(if (showTaskTypes) "Cerrar" else "Mostrar")
+                    }
                 }
             }
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Crear nueva tarea o editar tarea existente
-        Text(if (modoEdicion == null) "Crear nueva tarea" else "Editar tarea")
-        Row(modifier = Modifier.fillMaxWidth()) {
-            OutlinedTextField(
-                value = newTaskName,
-                onValueChange = { newTaskName = it },
-                label = { Text("Título de Tarea") },
-                placeholder = { Text("Pon el nombre de la tarea...") },
-                modifier = Modifier.weight(1f)
-            )
-        }
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Row(modifier = Modifier.fillMaxWidth()) {
-            OutlinedTextField(
-                value = newTaskDescrip,
-                onValueChange = { newTaskDescrip = it },
-                label = { Text("Descripción") },
-                placeholder = { Text("Pon la descripción de la tarea...") },
-                modifier = Modifier.weight(1f)
-            )
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Button(
-            onClick = {
-                if (newTaskName.isNotBlank() && selectedTaskTypeName.isNotBlank()) {
-                    if (modoEdicion == null) {
-                        // Crear nueva tarea
-                        viewModel.addTask(newTaskName, selectedTaskTypeName, newTaskDescrip)
-                    } else {
-                        // Actualizar tarea existente
-                        val updatedTask = modoEdicion!!.copy(
-                            name = newTaskName,
-                            description = newTaskDescrip,
-                            id_tipostareas = taskTypes.find { it.title == selectedTaskTypeName }?.id?.toLong() ?: 0
-                        )
-                        viewModel.updateTask(updatedTask)
-                    }
-                    // Limpiar campos después de agregar o editar
-                    newTaskName = ""
-                    selectedTaskTypeName = ""
-                    newTaskDescrip = ""
-                    modoEdicion = null
-                }
-            },
-            modifier = Modifier.fillMaxWidth(),
-            colors = ButtonDefaults.buttonColors(Color(0xFFFFCC35))
-        ) {
-            Text(if (modoEdicion == null) "Agregar Tarea" else "Confirmar Edición")
+            Button(onClick ={ showAddTaskTypeScreen=false}) { Text("Cerrar") }
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -227,6 +234,7 @@ fun TaskApp(viewModel: TaskViewModel) {
                     taskTypes = taskTypes, // Pasar la lista de tipos de tarea aquí
                     onDelete = { viewModel.deleteTask(task) },
                     onUpdate = { updatedTask ->
+                        showAddTaskScreen=true
                         modoEdicion = updatedTask
                         newTaskName = updatedTask.name
                         selectedTaskTypeName = taskTypes.find { it.id.toLong() == updatedTask.id_tipostareas }?.title ?: ""
