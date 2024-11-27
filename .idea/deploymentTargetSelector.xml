@@ -7,10 +7,10 @@
       </SelectionState>
       <SelectionState runConfigName="Aplicacion12.app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2024-11-21T11:54:28.394183272Z">
+        <DropdownSelection timestamp="2024-11-27T09:00:33.464250821Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=/home/iriem/.android/avd/Proyecto_Final.avd" />
+              <DeviceId pluginId="LocalEmulator" identifier="path=/home/iriem/.android/avd/ProyectoFinal2.avd" />
             </handle>
           </Target>
         </DropdownSelection>
