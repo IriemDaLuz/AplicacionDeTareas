@@ -56,7 +56,15 @@ fun TaskApp(viewModel: TaskViewModel) {
             fontSize = 18.sp,
             modifier = Modifier.padding(top = 18.dp, bottom = 24.dp)
         )
+        Row {
+            Button(onClick = {showAddTaskScreen}) {
+                Text("Añadir Tareas")
+            }
 
+            Button(onClick = {showAddTaskTypeScreen}) {
+                Text("Añadir Tipos de Tareas")
+            }
+        }
         // Crear o editar tipo de tarea
         Text(if (modoEdicionTipo) "Editar tipo de tarea" else "Crear nuevo tipo de tarea")
         Row {
