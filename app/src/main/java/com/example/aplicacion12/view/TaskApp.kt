@@ -90,6 +90,7 @@ fun TaskApp(viewModel: TaskViewModel) {
                     placeholder = { Text("Pon la descripción de la tarea...") },
                     modifier = Modifier.weight(1f)
                 )
+
             }
 
             Spacer(modifier = Modifier.height(16.dp))
