@@ -22,15 +22,20 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.aplicacion12.data.Task
+import com.example.aplicacion12.data.TaskType
 
 @Composable
 fun TaskCard(
     task: Task,
+    taskTypes: List<TaskType>,
     onDelete: (Task) -> Unit,
     onUpdate: (Task) -> Unit
 ) {
     var expanded by remember { mutableStateOf(false) }
     var descVisibility by remember { mutableStateOf("") }
+
+    // Obtener el nombre del tipo de tarea
+    val taskTypeName = taskTypes.find { it.id.toLong() == task.id_tipostareas }?.title ?: "Sin tipo"
 
     Card(
         modifier = Modifier
@@ -48,16 +53,25 @@ fun TaskCard(
         Row(
             modifier = Modifier.padding(vertical = animatedPadding, horizontal = 8.dp),
         ) {
-            Column(
-            ) {
+            Column {
                 Row(modifier = Modifier) {
-                    Text(text = task.id.toString() + ". " +task.name, fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                    Text(modifier = Modifier.padding(start = 60.dp),text="Id de tipo de Tarea:"+task.id_tipostareas.toString())
+                    Text(
+                        text = "${task.id}. ${task.name}",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp
+                    )
+                    Text(
+                        modifier = Modifier.padding(start = 60.dp),
+                        text = "Tipo de Tarea: $taskTypeName"
+                    )
                 }
                 if (expanded) {
-                    Text(modifier = Modifier.padding(start=30.dp,15.dp, bottom = 15.dp),text=descVisibility)
+                    Text(
+                        modifier = Modifier.padding(start = 30.dp, top = 15.dp, bottom = 15.dp),
+                        text = descVisibility
+                    )
                 }
-                Row() {
+                Row {
                     Button(
                         onClick = {
                             expanded = !expanded
@@ -65,20 +79,26 @@ fun TaskCard(
                                 descVisibility = task.description.toString()
                             }
                         },
-                        modifier = Modifier.padding(start = 8.dp, bottom = 0.dp), colors = ButtonDefaults.buttonColors(Color(0xFFFFCC35))
+                        modifier = Modifier.padding(start = 8.dp),
+                        colors = ButtonDefaults.buttonColors(Color(0xFFFFCC35))
                     ) {
                         Text(if (expanded) "Cerrar Descripción" else "Mostrar descripción")
                     }
-                    Button(modifier = Modifier.padding(start = 8.dp, bottom = 0.dp ),onClick = {}, colors = ButtonDefaults.buttonColors(Color(0xFFFFCC35))) {
+                    Button(
+                        modifier = Modifier.padding(start = 8.dp),
+                        onClick = { onUpdate(task) },
+                        colors = ButtonDefaults.buttonColors(Color(0xFFFFCC35))
+                    ) {
                         Icon(
                             imageVector = Icons.Filled.Edit,
                             contentDescription = "Editar",
                             tint = Color.White
                         )
                     }
-
-                    // Delete button
-                    Button(onClick = { onDelete(task) }, colors = ButtonDefaults.buttonColors(Color(0xFFFFCC35))) {
+                    Button(
+                        onClick = { onDelete(task) },
+                        colors = ButtonDefaults.buttonColors(Color(0xFFFFCC35))
+                    ) {
                         Icon(
                             imageVector = Icons.Filled.Delete,
                             contentDescription = "Eliminar",
@@ -88,7 +108,6 @@ fun TaskCard(
                 }
             }
             Spacer(modifier = Modifier.width(16.dp))
-
         }
     }
 }
