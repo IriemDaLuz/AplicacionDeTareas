@@ -27,7 +27,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ModifierLocalBeyondBoundsLayout
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -166,8 +165,16 @@ fun TaskApp(viewModel: TaskViewModel) {
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(taskTypes) { taskType ->
-                    Row(modifier = Modifier.fillMaxWidth().background(color=Color(0xFFFFCC35)), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-                        Text(taskType.title)
+                    Row(modifier = Modifier.fillMaxWidth().background(color=Color(0xFFFFCC35)),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically)
+                    {
+                        Text(
+                            text=taskType.title,
+                            modifier = Modifier.padding(start = 8.dp),
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 18.sp
+                        )
                         // Muestra el título de cada tipo de tarea
                         Row (modifier = Modifier.padding( end = 10.dp)){
                             IconButton(onClick = {viewModel.updateTaskType(taskType)}){
