@@ -1,10 +1,6 @@
 package com.example.aplicacion12.view
 
-import android.R
 import android.util.Log
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.layout.Arrangement
@@ -13,9 +9,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Build
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -31,7 +25,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.aplicacion12.data.Task
+import com.example.aplicacion12.data.TaskType
 import com.example.aplicacion12.viewmodel.Task.TaskViewModel
+
 
 @Composable
 fun TaskApp(viewModel: TaskViewModel) {
@@ -42,12 +38,10 @@ fun TaskApp(viewModel: TaskViewModel) {
     val taskTypes by viewModel.taskTypes.collectAsState()
     var showTaskTypes by remember { mutableStateOf(false) }
 
-    // Variable para saber si estamos editando una tarea
+    // Variables de edición
     var modoEdicion by remember { mutableStateOf<Task?>(null) }
-
-    LaunchedEffect(tasks) {
-        Log.d("TaskApp", "Tasks updated: $tasks")
-    }
+    var modoEdicionTipo by remember { mutableStateOf(false) }
+    var taskTypeToEdit by remember { mutableStateOf<TaskType?>(null) }
 
     Column(
         modifier = Modifier
@@ -55,7 +49,6 @@ fun TaskApp(viewModel: TaskViewModel) {
             .padding(16.dp),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally,
-
     ) {
         Text(
             text = "Gestor de Tareas",
@@ -64,8 +57,8 @@ fun TaskApp(viewModel: TaskViewModel) {
             modifier = Modifier.padding(top = 18.dp, bottom = 24.dp)
         )
 
-        // Crear o seleccionar tipo de tarea
-        Text("Crear nuevo tipo de Tarea")
+        // Crear o editar tipo de tarea
+        Text(if (modoEdicionTipo) "Editar tipo de tarea" else "Crear nuevo tipo de tarea")
         Row {
             OutlinedTextField(
                 value = selectedTaskTypeName,
@@ -76,14 +69,36 @@ fun TaskApp(viewModel: TaskViewModel) {
             )
             Column(modifier = Modifier.weight(1.5f).padding(start = 20.dp)) {
                 Button(
-                    onClick = { viewModel.addTaskType(selectedTaskTypeName) },
-                    modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.buttonColors(Color(0xFFFFCC35))
+                    onClick = {
+                        if (selectedTaskTypeName.isNotBlank()) {
+                            val repetido = taskTypes.any { it.title.equals(selectedTaskTypeName, ignoreCase = true) }
+                            if (repetido) {
+                                Log.d("TaskApp", "El tipo de tarea ya existe: $selectedTaskTypeName")
+                            } else {
+                                if (modoEdicionTipo && taskTypeToEdit != null) {
+                                    // Actualizar tipo de tarea
+                                    val updatedTaskType = taskTypeToEdit!!.copy(title = selectedTaskTypeName)
+                                    viewModel.updateTaskType(updatedTaskType)
+                                    modoEdicionTipo = false
+                                    taskTypeToEdit = null
+                                } else {
+                                    // Crear nuevo tipo de tarea
+                                    viewModel.addTaskType(selectedTaskTypeName)
+                                }
+                                selectedTaskTypeName = ""
+                            }
+                        }
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(Color(0xFFFFCC35))
                 ) {
-                    Text("Añadir")
+                    Text(if (modoEdicionTipo) "Actualizar" else "Añadir")
                 }
+
                 Button(
                     onClick = { showTaskTypes = !showTaskTypes },
-                    modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.buttonColors(Color(0xFFFFCC35))
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(Color(0xFFFFCC35))
                 ) {
                     Text(if (showTaskTypes) "Cerrar" else "Mostrar")
                 }
@@ -98,7 +113,7 @@ fun TaskApp(viewModel: TaskViewModel) {
             OutlinedTextField(
                 value = newTaskName,
                 onValueChange = { newTaskName = it },
-                label = { Text("Titulo de Tarea") },
+                label = { Text("Título de Tarea") },
                 placeholder = { Text("Pon el nombre de la tarea...") },
                 modifier = Modifier.weight(1f)
             )
@@ -110,8 +125,8 @@ fun TaskApp(viewModel: TaskViewModel) {
             OutlinedTextField(
                 value = newTaskDescrip,
                 onValueChange = { newTaskDescrip = it },
-                label = { Text("Descripcion") },
-                placeholder = { Text("Pon la descripcion de la tarea...") },
+                label = { Text("Descripción") },
+                placeholder = { Text("Pon la descripción de la tarea...") },
                 modifier = Modifier.weight(1f)
             )
         }
@@ -122,10 +137,10 @@ fun TaskApp(viewModel: TaskViewModel) {
             onClick = {
                 if (newTaskName.isNotBlank() && selectedTaskTypeName.isNotBlank()) {
                     if (modoEdicion == null) {
-                        // Si no estamos editando, crear nueva tarea
+                        // Crear nueva tarea
                         viewModel.addTask(newTaskName, selectedTaskTypeName, newTaskDescrip)
                     } else {
-                        // Si estamos editando, actualizar la tarea
+                        // Actualizar tarea existente
                         val updatedTask = modoEdicion!!.copy(
                             name = newTaskName,
                             description = newTaskDescrip,
@@ -137,26 +152,19 @@ fun TaskApp(viewModel: TaskViewModel) {
                     newTaskName = ""
                     selectedTaskTypeName = ""
                     newTaskDescrip = ""
-                    modoEdicion = null // Reseteamos la tarea en edición
+                    modoEdicion = null
                 }
             },
-            modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.buttonColors(Color(0xFFFFCC35))
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(Color(0xFFFFCC35))
         ) {
-            Text(if (modoEdicion == null) "Agregar Tarea" else "Confirmar edición")
+            Text(if (modoEdicion == null) "Agregar Tarea" else "Confirmar Edición")
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
         // Mostrar tipos de tareas existentes
         if (showTaskTypes) {
-
-            val animatedPadding by animateDpAsState(
-                targetValue = if (showTaskTypes) 24.dp else 15.dp,
-                animationSpec = spring(
-                    dampingRatio = Spring.DampingRatioLowBouncy,
-                    stiffness = Spring.StiffnessLow
-                )
-            )
             Text("Tipos de Tareas Existentes:", fontWeight = FontWeight.Bold)
             LazyColumn(
                 modifier = Modifier
@@ -165,34 +173,40 @@ fun TaskApp(viewModel: TaskViewModel) {
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(taskTypes) { taskType ->
-                    Row(modifier = Modifier.fillMaxWidth().background(color=Color(0xFFFFCC35)),
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(color = Color(0xFFFFCC35)),
                         horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically)
-                    {
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
                         Text(
-                            text=taskType.title,
+                            text = taskType.title,
                             modifier = Modifier.padding(start = 8.dp),
                             fontWeight = FontWeight.Bold,
                             fontSize = 18.sp
                         )
-                        // Muestra el título de cada tipo de tarea
-                        Row (modifier = Modifier.padding( end = 10.dp)){
-                            IconButton(onClick = {viewModel.updateTaskType(taskType)}){
+                        Row(modifier = Modifier.padding(end = 10.dp)) {
+                            IconButton(onClick = {
+                                // Activar modo edición para tipo de tarea
+                                taskTypeToEdit = taskType
+                                selectedTaskTypeName = taskType.title
+                                modoEdicionTipo = true
+                            }) {
                                 Icon(Icons.Filled.Build, contentDescription = "Editar")
                             }
-                            IconButton(onClick = {viewModel.deleteTaskType(taskType)}){
+                            IconButton(onClick = { viewModel.deleteTaskType(taskType) }) {
                                 Icon(Icons.Filled.Delete, contentDescription = "Eliminar")
                             }
                         }
                     }
-
                 }
             }
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Mostrar tareas
+        // Mostrar tareas existentes
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -202,9 +216,9 @@ fun TaskApp(viewModel: TaskViewModel) {
             items(tasks) { task ->
                 TaskCard(
                     task = task,
+                    taskTypes = taskTypes, // Pasar la lista de tipos de tarea aquí
                     onDelete = { viewModel.deleteTask(task) },
                     onUpdate = { updatedTask ->
-                        // Configurar campos para la edición
                         modoEdicion = updatedTask
                         newTaskName = updatedTask.name
                         selectedTaskTypeName = taskTypes.find { it.id.toLong() == updatedTask.id_tipostareas }?.title ?: ""
@@ -213,5 +227,6 @@ fun TaskApp(viewModel: TaskViewModel) {
                 )
             }
         }
+
     }
 }
